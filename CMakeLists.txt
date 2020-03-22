@@ -2,6 +2,29 @@ cmake_minimum_required(VERSION 2.8.3)
 project(pegasus_gazebo_plugins)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+
+set(CMAKE_C_COMPILER "/usr/bin/clang-8" CACHE STRING "clang compiler" FORCE)
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++-8" CACHE STRING "clang++ compiler" FORCE)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(
+  CMAKE_CXX_CLANG_TIDY
+  clang-tidy-8;
+  -p;
+  -modernize-use-auto;
+  -header-filter=${CMAKE_SOURCE_DIR}/include;
+  -fix;
+  -fix-errors;
+  -extra-arg=-std=c++11;
+  # -format-style=google;
+  # -checks=*;
+  # -checks=*,clang-analyzer-*,-clang-analyzer-cplusplus*;
+  -warnings-as-errors=*;
+)
+
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS 
   roscpp 
