@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(pegasus_gazebo_plugins)
-#原来的文件里是没这句的，没这个就会出错
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 # Load catkin and all dependencies required for this package
