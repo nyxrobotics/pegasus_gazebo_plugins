@@ -88,19 +88,19 @@ void ClosedLoopPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
   position_ = _sdf->GetElement("position")->Get<std::string>();
 
   //we convert the strings into a string vector, spliting it at each space using the function Split_String
-  std::vector<std::string> rotations_splited = Split_String(rotation_);
-  std::vector<std::string> positions_splited = Split_String(position_);
+  std::vector<std::string> rotations_splited = splitString(rotation_);
+  std::vector<std::string> positions_splited = splitString(position_);
 
   //we convert the splited string vector into floats
-  std::vector<float>  rotations_splited_converted = Convert_to_float(rotations_splited);
-  std::vector<float>  positions_splited_converted = Convert_to_float(positions_splited);
+  std::vector<float>  rotations_splited_converted = convertToFloat(rotations_splited);
+  std::vector<float>  positions_splited_converted = convertToFloat(positions_splited);
 
 
   //model_->CreateJoint(joint_name_,"revolute",parent_,child_);
   physics::JointPtr j = physics_->CreateJoint("revolute");
          j->SetName(joint_name_);
          //math::Pose doesn't work too so we change it to ignition::math::Pose3d
-         ignition::math::Pose3d jointOrigin = ignition::math::Pose3d(
+         ignition::math::Pose3d joint_origin = ignition::math::Pose3d(
                                                                         positions_splited_converted[0],
                                                                         positions_splited_converted[1],
                                                                         positions_splited_converted[2],
@@ -109,7 +109,7 @@ void ClosedLoopPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
                                                                         rotations_splited_converted[2]
                                                                       );
 
-         j->Load(parent_,child_,jointOrigin);
+         j->Load(parent_,child_,joint_origin);
          j->Init();
          //vector3 is changed to vector3d
          ignition::math::Vector3d jointaxis = ignition::math::Vector3d(0,1,0);
@@ -120,7 +120,7 @@ void ClosedLoopPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
 }
 
 //function used to split a string at each space into a string vector
-std::vector<std::string> ClosedLoopPlugin::Split_String(const std::string& subject)
+std::vector<std::string> ClosedLoopPlugin::splitString(const std::string& subject)
 {
 
 
@@ -136,7 +136,7 @@ std::vector<std::string> ClosedLoopPlugin::Split_String(const std::string& subje
 }
 
 //function used to convert a string vector to a float vector
-std::vector<float> ClosedLoopPlugin::Convert_to_float(const std::vector<std::string>& subject)
+std::vector<float> ClosedLoopPlugin::convertToFloat(const std::vector<std::string>& subject)
 {
 
   std::vector<float> results(subject.size());
@@ -156,7 +156,7 @@ std::vector<float> ClosedLoopPlugin::Convert_to_float(const std::vector<std::str
 
 
 
-void ClosedLoopPlugin::UpdateChild()
+void ClosedLoopPlugin::updateChild()
 {
   static ros::Duration period(world_->Physics()->GetMaxStepSize());
 
@@ -164,5 +164,5 @@ void ClosedLoopPlugin::UpdateChild()
 
 GZ_REGISTER_MODEL_PLUGIN(ClosedLoopPlugin);
 
-}
+}  // namespace gazebo
 

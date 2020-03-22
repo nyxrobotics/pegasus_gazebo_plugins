@@ -25,14 +25,14 @@ namespace gazebo
   {
     public:
       ClosedLoopPlugin();
-      ~ClosedLoopPlugin();
+      ~ClosedLoopPlugin() override;
 
-      void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
-      void UpdateChild();
+      void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) override;
+      void updateChild();
 
     private:
-      std::vector<float> Convert_to_float(const std::vector<std::string>& subject);
-      std::vector<std::string> Split_String(const std::string& subject);
+      std::vector<float> convertToFloat(const std::vector<std::string>& subject);
+      std::vector<std::string> splitString(const std::string& subject);
 
       // Parameters
       std::string joint_name_, child_name_, parent_name_;
@@ -62,6 +62,6 @@ namespace gazebo
       event::ConnectionPtr updateConnection;
 
   };
-}
+}  // namespace gazebo
 
 #endif
