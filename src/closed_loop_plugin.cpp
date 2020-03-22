@@ -1,4 +1,4 @@
-#include <pegasus_gazebo_plugins/closed_loop_plugin.h>
+#include <closed_loop_plugin/closed_loop_plugin.h>
 #include <math.h>
 #include <vector>
 
@@ -31,7 +31,7 @@ void ClosedLoopPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
   // Error message if the model couldn't be found
   if (!model_)
   {
-    ROS_ERROR("Parent model is NULL! GazeboNaoqiControlPlugin could not be loaded.");
+    ROS_ERROR("Parent model is NULL! ClosedLoopPlugin could not be loaded.");
     return;
   }
 
