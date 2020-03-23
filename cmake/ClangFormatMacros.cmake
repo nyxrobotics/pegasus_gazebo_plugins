@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 cmake_policy(SET CMP0054 NEW)
+option(DUMP_CONFIG "Enable to Show Current Config" ON)
 
 macro(enable_clang_build)
   #message("[CMake] ENABLE_CLANG_BUILD")
@@ -25,32 +26,61 @@ macro(clang_format_fix)
   #message("[CMake] ENABLE_CLANG_FORMAT_FIX")
   find_program(CLANG_FORMAT_BIN clang-format-8)
   set(FILES_TO_FORMAT ${MY_SOURCES} ${MY_HEADERS})
-  message("[CLANG_FORMAT]Formatting Files \n >>> \n ${FILES_TO_FORMAT} \n <<< \n")
-  execute_process(COMMAND
+  if(DUMP_CONFIG)
+    message("[CLANG_FORMAT]Formatting Files \n >>> \n ${FILES_TO_FORMAT} \n <<< \n")
+    execute_process(
+      COMMAND
+        ${CLANG_FORMAT_BIN}
+        -style=file
+        -i
+        -dump-config
+        ${FILES_TO_FORMAT}
+      ENV
+        OUTPUT_VARIABLE output
+    )
+    message("[CLANG_FORMAT]Dump Config \n >>> \n ${output} \n <<< \n")
+  endif()
+  add_custom_target(call_clang_format
+    ALL
+    COMMAND
       ${CLANG_FORMAT_BIN}
       -style=file
       -i
-      -dump-config
       ${FILES_TO_FORMAT}
-    env OUTPUT_VARIABLE output
   )
-  message("${output}")
+
 endmacro()
 
 macro(clang_tidy_fix)
   #message("[CMake] ENABLE_CLANG_TIDY_FIX")
   find_program(CLANG_TIDY_BIN clang-tidy-8)
-  set(
-    CMAKE_CXX_CLANG_TIDY
-    clang-tidy-8;
-    -header-filter=${CMAKE_SOURCE_DIR}/include;
-    -extra-arg=-std=c++11;
-    -warnings-as-errors=*;
-    -fix;
-    -fix-errors;
-    -dump-config;
-    -enable-check-profile;
-    -format-style=file;
-    ${MY_SOURCES};
-  )
+
+  if(DUMP_CONFIG)
+    set(
+      CMAKE_CXX_CLANG_TIDY
+      ${CLANG_TIDY_BIN}
+      -header-filter=${CMAKE_SOURCE_DIR}/include
+      -extra-arg=-std=c++11
+      -warnings-as-errors=*
+      -fix
+      -fix-errors
+      -enable-check-profile
+      -format-style=file
+      -dump-config
+      ${MY_SOURCES}
+    )
+  else()
+    set(
+      CMAKE_CXX_CLANG_TIDY
+      ${CLANG_TIDY_BIN}
+      -header-filter=${CMAKE_SOURCE_DIR}/include
+      -extra-arg=-std=c++11
+      -warnings-as-errors=*
+      -fix
+      -fix-errors
+      -enable-check-profile
+      -format-style=file
+      ${MY_SOURCES}
+    )
+  endif()
 endmacro()

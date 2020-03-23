@@ -1,27 +1,23 @@
 cmake_minimum_required(VERSION 2.8.3)
 cmake_policy(SET CMP0054 NEW)
 project(pegasus_gazebo_plugins)
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 option(ENABLE_CLANG_BUILD "Enable Clang Build Tools" ON)
-option(ENABLE_CLANG_FORMAT_FIX "Perform fixes for Clang-Format" ON)
-option(ENABLE_CLANG_TIDY_FIX "Perform fixes for Clang-Tidy" ON)
+option(ENABLE_CLANG_FORMAT_FIX "Perform fixes for Clang-Format" OFF)
+option(ENABLE_CLANG_TIDY_FIX "Perform fixes for Clang-Tidy" OFF)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ClangFormatMacros.cmake)
-
+#set(DUMP_CONFIG OFF)
 if(ENABLE_CLANG_BUILD)
 	enable_clang_build()
 endif()
-
 if(ENABLE_CLANG_FORMAT_FIX)
 	clang_format_fix()
 endif()
-
 if(ENABLE_CLANG_TIDY_FIX)
 	clang_tidy_fix()
 endif()
-
-
-
 
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS 
