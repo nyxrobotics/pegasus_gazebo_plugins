@@ -26,14 +26,15 @@ macro(clang_format_fix)
   find_program(CLANG_FORMAT_BIN clang-format-8)
   set(FILES_TO_FORMAT ${MY_SOURCES} ${MY_HEADERS})
   message("[CLANG_FORMAT]Formatting Files \n >>> \n ${FILES_TO_FORMAT} \n <<< \n")
-  add_custom_target(call_clang_format
-    ALL
-    COMMAND
+  execute_process(COMMAND
       ${CLANG_FORMAT_BIN}
       -style=file
       -i
+      -dump-config
       ${FILES_TO_FORMAT}
+    env OUTPUT_VARIABLE output
   )
+  message("${output}")
 endmacro()
 
 macro(clang_tidy_fix)
@@ -42,7 +43,6 @@ macro(clang_tidy_fix)
   set(
     CMAKE_CXX_CLANG_TIDY
     clang-tidy-8;
-    ${MY_SOURCES}
     -header-filter=${CMAKE_SOURCE_DIR}/include;
     -extra-arg=-std=c++11;
     -warnings-as-errors=*;
@@ -51,5 +51,6 @@ macro(clang_tidy_fix)
     -dump-config;
     -enable-check-profile;
     -format-style=file;
+    ${MY_SOURCES};
   )
 endmacro()
