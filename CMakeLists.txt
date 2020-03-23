@@ -19,16 +19,17 @@ if(ENABLE_CLANG_BUILD)
 	set(CMAKE_CXX_STANDARD 11)
 	set(CMAKE_C_EXTENSIONS OFF)
 	set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
 
-if(ENABLE_CLANG_FORMAT_FIX)
-	find_program(CLANG_FORMAT_BIN clang-format-8)
 	file(GLOB_RECURSE MY_SOURCES_C "src/*.c")
 	file(GLOB_RECURSE MY_SOURCES_CPP "src/*.cpp")
 	set(MY_SOURCES ${MY_SOURCES_C} ${MY_SOURCES_CPP})
 	file(GLOB_RECURSE MY_HEADERS_H "include/*.h")
 	file(GLOB_RECURSE MY_HEADERS_HPP "include/*.hpp")
 	set(MY_HEADERS ${MY_HEADERS_H} ${MY_HEADERS_HPP})
+endif()
+
+if(ENABLE_CLANG_FORMAT_FIX)
+	find_program(CLANG_FORMAT_BIN clang-format-8)
 	set(FILES_TO_FORMAT ${MY_SOURCES} ${MY_HEADERS})
 	message("[CLANG_FORMAT]Formatting Files \n >>> \n ${FILES_TO_FORMAT} \n <<< \n")
 	add_custom_target(call_clang_format
@@ -42,19 +43,19 @@ if(ENABLE_CLANG_FORMAT_FIX)
 endif()
 
 if(ENABLE_CLANG_TIDY_FIX)
+	find_program(CLANG_TIDY_BIN clang-tidy-8)
 	set(
-	  CMAKE_CXX_CLANG_TIDY
-	  clang-tidy-8;
-	  -p;
-	  -modernize-use-auto;
-	  -header-filter=${CMAKE_SOURCE_DIR}/include;
-	  -fix;
-	  -fix-errors;
-	  -extra-arg=-std=c++11;
-	  # -format-style=google;
-	  # -checks=*;
-	  # -checks=*,clang-analyzer-*,-clang-analyzer-cplusplus*;
-	  -warnings-as-errors=*;
+		CMAKE_CXX_CLANG_TIDY
+		clang-tidy-8;
+		${MY_SOURCES}
+		-header-filter=${CMAKE_SOURCE_DIR}/include;
+		-extra-arg=-std=c++11;
+		-warnings-as-errors=*;
+		-fix;
+		-fix-errors;
+		#-dump-config;
+		-enable-check-profile;
+		-format-style=file;
 	)
 endif()
 
