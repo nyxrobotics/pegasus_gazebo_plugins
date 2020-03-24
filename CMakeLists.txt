@@ -1,7 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
+cmake_policy(SET CMP0054 NEW)
 project(pegasus_gazebo_plugins)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+find_package(catkin_clang_format REQUIRED)
+include(${CMAKE_MODULE_PATH}/ClangFormatMacros.cmake)
+enable_clang_build()
+enable_clang_format()
+enable_clang_tidy()
+
+
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS 
   roscpp 
