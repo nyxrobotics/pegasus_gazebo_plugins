@@ -2,6 +2,7 @@
 #include <math.h>
 #include <vector>
 
+
 namespace gazebo
 {
 
@@ -16,7 +17,7 @@ ClosedLoopPlugin::ClosedLoopPlugin()
 
 ClosedLoopPlugin::~ClosedLoopPlugin()
 {
-  event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
+  this->updateConnection.reset();
 
   kill_sim = true;
 }
@@ -26,7 +27,9 @@ void ClosedLoopPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
   ros::NodeHandle model_nh;
   model_ = _parent;
   world_ = model_->GetWorld();
-  physics_ = world_->GetPhysicsEngine();
+  //in the new gazebo version GetPhysicsEngine(); don't work we need to use
+  // the new version of it : Physics();
+  physics_ = world_->Physics();
 
   // Error message if the model couldn't be found
   if (!model_)
@@ -82,6 +85,7 @@ void ClosedLoopPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
     ROS_ERROR("No Link named %s. ClosedLoopPlugin could not be loaded.", parent_name_.c_str());
     return;
   }
+
   //we get the string given into the <rotation> tag
   rotation_ = _sdf->GetElement("rotation")->Get<std::string>();
   //we get the string given into the <position> tag
@@ -101,14 +105,13 @@ void ClosedLoopPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
          j->SetName(joint_name_);
          //math::Pose doesn't work too so we change it to ignition::math::Pose3d
          ignition::math::Pose3d jointOrigin = ignition::math::Pose3d(
-                                                                        positions_splited_converted[0],
-                                                                        positions_splited_converted[1],
-                                                                        positions_splited_converted[2],
+																		positions_splited_converted[0],
+																		positions_splited_converted[1],
+																		positions_splited_converted[2],
                                                                         rotations_splited_converted[0],
                                                                         rotations_splited_converted[1],
                                                                         rotations_splited_converted[2]
                                                                       );
-
          j->Load(parent_,child_,jointOrigin);
          j->Init();
          //vector3 is changed to vector3d
@@ -158,11 +161,11 @@ std::vector<float> ClosedLoopPlugin::Convert_to_float(const std::vector<std::str
 
 void ClosedLoopPlugin::UpdateChild()
 {
-  static ros::Duration period(world_->GetPhysicsEngine()->GetMaxStepSize());
+  //same here, GetPhysicsEngine() is not available anymore
+  static ros::Duration period(world_->Physics()->GetMaxStepSize());
 
 }
 
 GZ_REGISTER_MODEL_PLUGIN(ClosedLoopPlugin);
 
 }
-
